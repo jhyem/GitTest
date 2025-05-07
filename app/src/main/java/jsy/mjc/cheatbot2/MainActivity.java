@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         inputMessage.setPrivateImeOptions("defaultInputmode=korean;");
 
 
+        // abc
         addMessage("폐기봇", "반갑습니다. 무엇을 도와드릴까요?", false);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
