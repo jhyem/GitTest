@@ -21,7 +21,7 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
 
 
-        // TEST
+        // TEST ASD
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("min.mjc.pyegibot", appContext.getPackageName());
