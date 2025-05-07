@@ -1,0 +1,10 @@
+# Material file for white sphere with PBR
+newmtl White
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ns 0.000000
+map_Kd sphere_albedo.png
+map_Pr sphere_roughness_metallic_ao.png
+map_Pm sphere_roughness_metallic_ao.png
+map_Ke sphere_roughness_metallic_ao.png 
