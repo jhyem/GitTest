@@ -1,0 +1,11 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme with NoActionBar -->
+    <style name="Base.Theme.CheatBot2" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="Theme.CheatBot2" parent="Base.Theme.CheatBot2" />
+
+</resources>
