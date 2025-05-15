@@ -22,7 +22,6 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
             mapFragment.getMapAsync(this);
         }
 
-        // 하단 네비게이션 설정
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -41,14 +40,14 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
-        // 서울 좌표
-        LatLng seoul = new LatLng(37.5665, 126.9780);
+        //인천광역시 미추홀구_대형폐기물 스티커 판매소에 있는 호산할인마트
+        LatLng seoul = new LatLng(37.4475941000, 126.6938985000);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 15));
 
         // 마커 표시
         mMap.addMarker(new MarkerOptions()
                 .position(seoul)
-                .title("서울 시청")
-                .snippet("스티커 스팟 예시"));
+                .title("인천 미추홀구")
+                .snippet("스티커 판매소-호산 할인마트"));
     }
 }
