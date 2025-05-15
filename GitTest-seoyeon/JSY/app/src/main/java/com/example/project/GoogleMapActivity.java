@@ -41,12 +41,12 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
         mMap = googleMap;
 
         //인천광역시 미추홀구_대형폐기물 스티커 판매소에 있는 호산할인마트
-        LatLng seoul = new LatLng(37.4475941000, 126.6938985000);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 15));
+        LatLng Sticker= new LatLng(37.4475941000, 126.6938985000);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Sticker, 20));
 
         // 마커 표시
         mMap.addMarker(new MarkerOptions()
-                .position(seoul)
+                .position(Sticker)
                 .title("인천 미추홀구")
                 .snippet("스티커 판매소-호산 할인마트"));
     }
