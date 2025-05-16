@@ -17,7 +17,7 @@ android:orientation="vertical">
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center_vertical">
+        android:gravity="center">
 
         <!-- 시도 -->
         <TextView

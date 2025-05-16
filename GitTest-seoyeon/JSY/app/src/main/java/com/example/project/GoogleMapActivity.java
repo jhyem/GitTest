@@ -42,7 +42,6 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
             mapFragment.getMapAsync(this);
         }
 
-        // 하단 네비게이션 처리
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -96,8 +95,6 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
-
-
         loadCsvMarkers(mMap, R.raw.micho);
     }
 
@@ -106,7 +103,6 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
             InputStream is = getResources().openRawResource(csvResId);
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             String line;
-
 
             reader.readLine(); // 헤더 건너뜀
 
@@ -127,7 +123,7 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
                         .title(name)
                         .snippet(address));
                 if (firstPosition == null) {
-                    firstPosition = position; // 첫 번째 마커 기준 위치 저장
+                    firstPosition = position; // 첫 번째 마커 기준으로 위치 저장
                 }
             }
             reader.close();
@@ -135,13 +131,13 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
                 float zoomLevel = 15.0f; // 줌 레벨
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(firstPosition, zoomLevel));
             } else {
-                Log.w("Map", "CSV에 유효한 위치 정보가 없습니다.");
+                Log.w("map", "CSV 위치 정보가 없습니다!");
             }
 
 
 
         } catch (Exception e) {
-            Log.e("csv error", "csv 파일 읽기 실패", e); // 로그 에러 확인용(테스트)
+            Log.e("csv error", "csv 파일 읽기 실패!", e); // 로그 에러 확인용(테스트)
         }
     }
 }
