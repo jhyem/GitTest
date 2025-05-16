@@ -7,6 +7,7 @@ android:layout_height="match_parent"
 xmlns:app="http://schemas.android.com/apk/res-auto"
 android:orientation="vertical">
 
+
     <LinearLayout
         android:id="@+id/filterLayout"
         android:layout_width="0dp"
@@ -19,6 +20,12 @@ android:orientation="vertical">
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center">
 
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/logo"
+            android:layout_gravity="start"
+            android:layout_marginEnd="30dp"/>
         <!-- 시도 -->
         <TextView
             android:id="@+id/provinceLabel"
