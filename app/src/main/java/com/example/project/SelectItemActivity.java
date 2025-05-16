@@ -1,7 +1,5 @@
 package com.example.project;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageButton;
@@ -23,7 +21,7 @@ public class SelectItemActivity extends AppCompatActivity {
         confirmButton = findViewById(R.id.confirmButton);
 
         confirmButton.setOnClickListener(v -> {
-            // 선택된 품목 추출 (필요 시 인텐트로 넘기기 가능)
+            // 선택된 품목 값 넘기기
             String selectedItem = categorySpinner.getSelectedItem().toString();
 
             Intent intent = new Intent(SelectItemActivity.this, CameraReadyActivity.class);

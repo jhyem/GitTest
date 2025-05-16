@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="#D2D6C5"
-    tools:ignore="ExtraText"> <!-- 배경색 (연한 카키색) -->
+    android:background="#D2D6C5">
 
     <ImageView
         android:id="@+id/logoImageView"

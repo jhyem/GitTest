@@ -2,11 +2,13 @@ package com.example.project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
@@ -19,13 +21,16 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CameraCaptureActivity extends AppCompatActivity {
 
     private PreviewView previewView;
     private ImageButton captureButton;
-    private ProcessCameraProvider cameraProvider;
     private ImageCapture imageCapture;
+
+    private ExecutorService cameraExecutor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,35 +40,39 @@ public class CameraCaptureActivity extends AppCompatActivity {
         previewView = findViewById(R.id.previewView);
         captureButton = findViewById(R.id.captureButton);
 
-        startCamera();
+        cameraExecutor = Executors.newSingleThreadExecutor();
+
+        startCamera(); // 카메라 시작
 
         captureButton.setOnClickListener(v -> takePhoto());
     }
 
     private void startCamera() {
-        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(this);
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
+                ProcessCameraProvider.getInstance(this);
+
         cameraProviderFuture.addListener(() -> {
             try {
-                cameraProvider = cameraProviderFuture.get();
-                bindPreview(cameraProvider);
+                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+
+                Preview preview = new Preview.Builder().build();
+                preview.setSurfaceProvider(previewView.getSurfaceProvider());
+
+                imageCapture = new ImageCapture.Builder()
+                        .setTargetRotation(previewView.getDisplay().getRotation())
+                        .build();
+
+                CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+
+                // 기존 카메라 해제 후 다시 바인딩
+                cameraProvider.unbindAll();
+                Camera camera = cameraProvider.bindToLifecycle(
+                        this, cameraSelector, preview, imageCapture);
+
             } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
+                Log.e("CameraX", "카메라 초기화 실패", e);
             }
         }, ContextCompat.getMainExecutor(this));
-    }
-
-    private void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
-        previewView.setImplementationMode(PreviewView.ImplementationMode.SURFACE_VIEW);
-
-        Preview preview = new Preview.Builder().build();
-        preview.setSurfaceProvider(previewView.getSurfaceProvider());
-
-        imageCapture = new ImageCapture.Builder().build();
-
-        CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
-
-        cameraProvider.unbindAll();
-        cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);
     }
 
     private void takePhoto() {
@@ -72,7 +81,9 @@ public class CameraCaptureActivity extends AppCompatActivity {
         ImageCapture.OutputFileOptions outputOptions =
                 new ImageCapture.OutputFileOptions.Builder(photoFile).build();
 
-        imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this),
+        imageCapture.takePicture(
+                outputOptions,
+                ContextCompat.getMainExecutor(this),
                 new ImageCapture.OnImageSavedCallback() {
                     @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
@@ -80,6 +91,7 @@ public class CameraCaptureActivity extends AppCompatActivity {
                         intent.putExtra("imagePath", photoFile.getAbsolutePath());
                         intent.putExtra("selectedCategory", getIntent().getStringExtra("selectedCategory"));
                         startActivity(intent);
+                        finish();
                     }
 
                     @Override
@@ -88,4 +100,13 @@ public class CameraCaptureActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (cameraExecutor != null) {
+            cameraExecutor.shutdown();
+        }
+    }
 }
+
