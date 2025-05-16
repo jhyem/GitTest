@@ -2,6 +2,11 @@ package com.example.project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,16 +14,26 @@ import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.*;
 
 public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
+    private Spinner provinceSpinner, citySpinner;
+    private Map<String, Integer> csvFileMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mapview);
+
+        provinceSpinner = findViewById(R.id.provinceSpinner);
+        citySpinner = findViewById(R.id.citySpinner);
+
+        setupProvince();
+        setupCity();
 
         // 지도 초기화
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -42,52 +57,91 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
+    private void setupProvince() {
+        ArrayAdapter<String> provinceAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, Collections.singletonList("인천"));
+        provinceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        provinceSpinner.setAdapter(provinceAdapter);
+        provinceSpinner.setEnabled(false); // 인천 고정
+    }
+
+    private void setupCity() {
+        List<String> cities = new ArrayList<>();
+        cities.add("구 선택해주세요");
+        cities.add("연수구");
+        cities.add("미추홀구");
+
+        csvFileMap = new HashMap<>();
+        csvFileMap.put("연수구", R.raw.yeonsu);
+        csvFileMap.put("미추홀구", R.raw.micho);
+
+        ArrayAdapter<String> cityAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, cities);
+        cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        citySpinner.setAdapter(cityAdapter);
+
+        citySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
+                String selectedCity = cities.get(position);
+                if (mMap != null && csvFileMap.containsKey(selectedCity)) {
+                    mMap.clear();
+                    loadCsvMarkers(mMap, csvFileMap.get(selectedCity));
+                }
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    }
+
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-
-        // 10개 스티커 판매소 위치
-        List<LatLng> locations = Arrays.asList(
-                new LatLng(37.4475941, 126.6938985), // 호산할인마트
-                new LatLng(37.4467524, 126.6918178), // 조광할인마트
-                new LatLng(37.445863, 126.6918487),  // 불티나슈퍼
-                new LatLng(37.4455375, 126.6908963), // 대경마트
-                new LatLng(37.4450433, 126.6946155), // 씨유 관교동아
-                new LatLng(37.444183, 126.696813),   // 이마트24 관교승학점
-                new LatLng(37.4438066, 126.6956953), // 한아름 마트
-                new LatLng(37.442551, 126.6945463),  // 한우촌웰빙할인마트
-                new LatLng(37.4411296, 126.6954341), // 굿모닝 할인마트
-                new LatLng(37.4663049, 126.6619925)  // 고려 편의점
-        );
-
-        List<String> titles = Arrays.asList(
-                "호산할인마트", "조광할인마트", "불티나슈퍼", "대경마트", "씨유 관교동아",
-                "이마트24 관교승학점", "한아름 마트", "한우촌웰빙할인마트", "굿모닝 할인마트", "고려 편의점"
-        );
-
-        List<String> snippets = Arrays.asList(
-                "인하로411번길 25", "인하로396번길 19", "관교동473-13", "주승로183",
-                "인하로430번길9 동아아파트", "관교동", "관교동 13-6", "주승로 232",
-                "경원대로640번길 30", "경인로 173"
-        );
-
-        // 지도 전체 확대 범위
-        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-
-        for (int i = 0; i < locations.size(); i++) {
-            mMap.addMarker(new MarkerOptions()
-                    .position(locations.get(i))
-                    .title(titles.get(i))
-                    .snippet(snippets.get(i)));
-            boundsBuilder.include(locations.get(i));
-        }
-
-        // 마커 전체가 보이는 화면
-        LatLngBounds bounds = boundsBuilder.build();
-        int padding = 100;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
-
-        // 확대/축소 버튼 UI 추가
         mMap.getUiSettings().setZoomControlsEnabled(true);
+
+
+        loadCsvMarkers(mMap, R.raw.micho);
+    }
+
+    private void loadCsvMarkers(GoogleMap map, int csvResId) {
+        try {
+            InputStream is = getResources().openRawResource(csvResId);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String line;
+
+
+            reader.readLine(); // 헤더 건너뜀
+
+            LatLng firstPosition = null;
+
+            while ((line = reader.readLine()) != null) {
+                String[] tokens = line.split(",");
+                if (tokens.length != 4) continue;
+
+                String name = tokens[0].trim();
+                String address = tokens[1].trim();
+                double lat = Double.parseDouble(tokens[2].trim());
+                double lng = Double.parseDouble(tokens[3].trim());
+
+                LatLng position = new LatLng(lat, lng);
+                map.addMarker(new MarkerOptions()
+                        .position(position)
+                        .title(name)
+                        .snippet(address));
+                if (firstPosition == null) {
+                    firstPosition = position; // 첫 번째 마커 기준 위치 저장
+                }
+            }
+            reader.close();
+            if (firstPosition != null) {
+                float zoomLevel = 15.0f; // 줌 레벨
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(firstPosition, zoomLevel));
+            } else {
+                Log.w("Map", "CSV에 유효한 위치 정보가 없습니다.");
+            }
+
+
+
+        } catch (Exception e) {
+            Log.e("csv error", "csv 파일 읽기 실패", e); // 로그 에러 확인용(테스트)
+        }
     }
 }
