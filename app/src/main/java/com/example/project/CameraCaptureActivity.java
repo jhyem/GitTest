@@ -109,4 +109,3 @@ public class CameraCaptureActivity extends AppCompatActivity {
         }
     }
 }
-
