@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+   Copyright 2016 Google LLC
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<resources>
+    <string name="app_name" translatable="false">HelloAR Java</string>
+    <string name="depth_use_explanation" translatable="false">When Depth is enabled on supported devices, virtual objects adapt to the environment by blending in with the real world.</string>
+    <string name="button_text_enable_depth" translatable="false">Enable</string>
+    <string name="button_text_disable_depth" translatable="false">Disable</string>
+    <string name="options_title_with_depth" translatable="false">Your device supports depth</string>
+    <string name="options_title_without_depth" translatable="false">Your device does not support depth</string>
+    <string name="done" translatable="false">Done</string>
+    <string-array name="depth_options_array" translatable="false">
+        <item>Enable depth</item>
+        <item>Show depth map</item>
+    </string-array>
+    <string name="options_title_instant_placement" translatable="false">Instant Placement options</string>
+    <string-array name="instant_placement_options_array" translatable="false">
+        <item>Enable Instant Placement</item>
+    </string-array>
+
+    <string-array name="category_items">
+        <item>가전제품류 - TV</item>
+        <item>가전제품류 - 공기청정기</item>
+        <item>가전제품류 - 식기건조기</item>
+        <item>가전제품류 - 식기세척기</item>
+        <item>가전제품류 - 에어컨 실외기</item>
+        <item>가전제품류 - 정수기</item>
+
+        <item>가구류 - TV 받침대</item>
+        <item>가구류 - 거울</item>
+        <item>가구류 - 찬장</item>
+        <item>가구류 - 책상</item>
+        <item>가구류 - 책장</item>
+        <item>가구류 - 싱크대</item>
+        <item>가구류 - 유리</item>
+        <item>가구류 - 장롱</item>
+        <item>가구류 - 장식장</item>
+
+        <item>생활용품류 - 게시판 · 화이트보드</item>
+        <item>생활용품류 - 고무통</item>
+        <item>생활용품류 - 벽시계</item>
+        <item>생활용품류 - 빨래건조대</item>
+        <item>생활용품류 - 액자</item>
+        <item>생활용품류 - 어항</item>
+        <item>생활용품류 - 조명기구</item>
+        <item>생활용품류 - 캣타워</item>
+        <item>생활용품류 - 항아리</item>
+        <item>생활용품류 - 화분</item>
+    </string-array>
+
+
+
+</resources>

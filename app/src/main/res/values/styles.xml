@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <style name="BottomNavigationText" parent="TextAppearance.AppCompat.Caption">
+    <item name="android:textSize">14sp</item>
+    <item name="android:layout_marginTop">10dp</item> <!-- 아이콘과 글씨 사이 여유 추가 -->
+  </style>
+</resources>
