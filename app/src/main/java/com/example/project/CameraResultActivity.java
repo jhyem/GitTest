@@ -10,6 +10,7 @@ import android.text.InputType;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +33,7 @@ public class CameraResultActivity extends AppCompatActivity {
         confirmButton = findViewById(R.id.confirmButton);
 
         String category = getIntent().getStringExtra("selectedCategory");
-        float measuredDistance = getIntent().getFloatExtra("measuredDistance", 0f); // m 단위
+        float measuredDistance = getIntent().getFloatExtra("measuredDistance", 0f); // cm 단위
         String imagePath = getIntent().getStringExtra("imagePath");
 
         if (imagePath != null) {
@@ -60,33 +61,58 @@ public class CameraResultActivity extends AppCompatActivity {
                         startActivity(intent);
                     })
                     .setNegativeButton("아니오", (dialog, which) -> {
-                        // EditText 입력 다이얼로그 표시
+                        boolean isAreaBased = category.equals("가구류 - 거울") ||
+                                category.equals("생활용품류 - 어항") ||
+                                category.equals("생활용품류 - 조명기구") ||
+                                category.equals("가구류 - 유리");
+
                         AlertDialog.Builder builder = new AlertDialog.Builder(CameraResultActivity.this);
                         builder.setTitle("규격을 입력해주세요");
 
-                        final EditText input = new EditText(CameraResultActivity.this);
-                        input.setHint("cm단위로 입력해주세요");
-                        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        LinearLayout layout = new LinearLayout(CameraResultActivity.this);
+                        layout.setOrientation(LinearLayout.VERTICAL);
+                        layout.setPadding(50, 40, 50, 10);
 
-                        builder.setView(input);
+                        final EditText inputWidth = new EditText(CameraResultActivity.this);
+                        inputWidth.setHint("가로(cm)");
+                        inputWidth.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        layout.addView(inputWidth);
+
+                        final EditText inputHeight = new EditText(CameraResultActivity.this);
+                        if (isAreaBased) {
+                            inputHeight.setHint("세로(cm)");
+                            inputHeight.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                            layout.addView(inputHeight);
+                        }
+
+                        builder.setView(layout);
 
                         builder.setPositiveButton("확인", (innerDialog, whichButton) -> {
                             try {
-                                float userInputDistance = Float.parseFloat(input.getText().toString());
-                                int newPrice = WastePriceCalculator.calculatePrice(category, userInputDistance);
+                                float width = Float.parseFloat(inputWidth.getText().toString());
+                                float resultValue;
+
+                                if (isAreaBased) {
+                                    float height = Float.parseFloat(inputHeight.getText().toString());
+                                    resultValue = width * height;
+                                } else {
+                                    resultValue = width; // 길이 기반 항목
+                                }
+
+                                int newPrice = WastePriceCalculator.calculatePrice(category, resultValue);
 
                                 Intent intent = new Intent(CameraResultActivity.this, StickerPriceActivity.class);
                                 intent.putExtra("imagePath", imagePath);
                                 intent.putExtra("result", category);
                                 intent.putExtra("price", newPrice);
                                 startActivity(intent);
+
                             } catch (NumberFormatException e) {
                                 Toast.makeText(CameraResultActivity.this, "숫자를 정확히 입력해주세요", Toast.LENGTH_SHORT).show();
                             }
                         });
 
                         builder.setNegativeButton("취소", (innerDialog, whichButton) -> innerDialog.cancel());
-
                         builder.show();
                     })
                     .show();

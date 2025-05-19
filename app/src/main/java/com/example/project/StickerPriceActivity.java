@@ -33,6 +33,7 @@ public class StickerPriceActivity extends AppCompatActivity {
         }
 
         resultTextView.setText("결과: " + result);
+
         priceTextView.setText("가격: " + price);
     }
 }
