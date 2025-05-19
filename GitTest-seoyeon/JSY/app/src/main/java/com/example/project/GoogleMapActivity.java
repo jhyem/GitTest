@@ -44,6 +44,7 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
         setupProvince();
         setupCity();
 
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_fragment);
         if (mapFragment != null) {
