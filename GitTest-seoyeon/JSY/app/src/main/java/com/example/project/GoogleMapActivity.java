@@ -1,15 +1,28 @@
 package com.example.project;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -20,9 +33,16 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCallback {
+
     private GoogleMap mMap;
     private Spinner provinceSpinner, citySpinner;
     private Map<String, Integer> csvFileMap;
+
+    private LocationManager locationManager; // 현위치 가져오기
+    private Button mylocation; // 내 위치 버튼
+    private FusedLocationProviderClient fusedLocationClient; // 위치 클라이언트
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +51,9 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         provinceSpinner = findViewById(R.id.provinceSpinner);
         citySpinner = findViewById(R.id.citySpinner);
+        mylocation = findViewById(R.id.mylocation);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         setupProvince();
         setupCity();
@@ -42,6 +65,7 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
             mapFragment.getMapAsync(this);
         }
 
+        // 하단 네비게이션
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -53,6 +77,18 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
                 return true;
             }
             return false;
+        });
+
+        // 내 위치 버튼 클릭
+        mylocation.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        LOCATION_PERMISSION_REQUEST_CODE);
+            } else {
+                showMyLocation();
+            }
         });
     }
 
@@ -95,7 +131,7 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        loadCsvMarkers(mMap, R.raw.micho);
+        loadCsvMarkers(mMap, R.raw.micho); // 초기값: 미추홀구
     }
 
     private void loadCsvMarkers(GoogleMap map, int csvResId) {
@@ -123,21 +159,63 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
                         .title(name)
                         .snippet(address));
                 if (firstPosition == null) {
-                    firstPosition = position; // 첫 번째 마커 기준으로 위치 저장
+                    firstPosition = position;
                 }
             }
             reader.close();
             if (firstPosition != null) {
-                float zoomLevel = 15.0f; // 줌 레벨
+                float zoomLevel = 15.0f;
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(firstPosition, zoomLevel));
             } else {
                 Log.w("map", "CSV 위치 정보가 없습니다!");
             }
 
-
-
         } catch (Exception e) {
-            Log.e("csv error", "csv 파일 읽기 실패!", e); // 로그 에러 확인용(테스트)
+            Log.e("csv error", "csv 파일 읽기 실패!", e);
+        }
+    }
+
+    private void showMyLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(10000); // 10초마다 요청
+        locationRequest.setFastestInterval(5000);
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null || locationResult.getLastLocation() == null) {
+                    Toast.makeText(GoogleMapActivity.this, "정확한 위치를 가져올 수 없습니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Location location = locationResult.getLastLocation();
+                LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(myLatLng).title("내 위치"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 16f));
+
+                // 위치 업데이트 중지 (1회만 받도록)
+                fusedLocationClient.removeLocationUpdates(this);
+            }
+        }, null);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showMyLocation();
+            } else {
+                Toast.makeText(this, "위치 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
