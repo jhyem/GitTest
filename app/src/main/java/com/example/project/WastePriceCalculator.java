@@ -2,7 +2,6 @@ package com.example.project;
 public class WastePriceCalculator {
 
     public static int calculatePrice(String category, float distance) {
-        // 거리(m)를 cm로 변환
         float sizeCm = 0;
 
         switch (category) {

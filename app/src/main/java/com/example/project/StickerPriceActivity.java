@@ -25,6 +25,7 @@ public class StickerPriceActivity extends AppCompatActivity {
 
         String imagePath = getIntent().getStringExtra("imagePath");
         String result = getIntent().getStringExtra("result");
+        String price = getIntent().getStringExtra("price");
 
         if (imagePath != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
@@ -32,8 +33,6 @@ public class StickerPriceActivity extends AppCompatActivity {
         }
 
         resultTextView.setText("결과: " + result);
-
-        // 예시 가격 계산
-        priceTextView.setText("2000원");
+        priceTextView.setText("가격: " + price);
     }
 }

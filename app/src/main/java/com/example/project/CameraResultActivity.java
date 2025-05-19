@@ -46,7 +46,7 @@ public class CameraResultActivity extends AppCompatActivity {
         // UI에 표시
         furnitureInfoTextView.setText(
                 "가구: " + category + "\n" +
-                        "스티커 가격: " + price + "원"
+                        "규격: " +measuredDistance
         );
         confirmButton.setOnClickListener(v -> {
             new AlertDialog.Builder(CameraResultActivity.this)
@@ -65,7 +65,7 @@ public class CameraResultActivity extends AppCompatActivity {
                         builder.setTitle("규격을 입력해주세요");
 
                         final EditText input = new EditText(CameraResultActivity.this);
-                        input.setHint("예: 12");
+                        input.setHint("cm단위로 입력해주세요");
                         input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
                         builder.setView(input);

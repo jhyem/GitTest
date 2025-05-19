@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">project</string>
     <string-array name="category_items">
-        <item>가전제품류 - TV</item>
+<!--        <item>가전제품류 - TV</item>-->
         <item>가전제품류 - 공기청정기</item>
         <item>가전제품류 - 식기건조기</item>
         <item>가전제품류 - 식기세척기</item>
