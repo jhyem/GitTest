@@ -94,7 +94,9 @@ public class CamLength extends AppCompatActivity implements SampleRender.Rendere
 
     private static final float Z_NEAR = 0.1f;
     private static final float Z_FAR = 100.0f;
-    private static final int MAX_ANCHORS = 3;  // 최대 앵커 개수를 3개로 변경
+    private static final int MAX_ANCHORS_2D = 2;  // 2D 측정용 최대 앵커 수
+    private static final int MAX_ANCHORS_3D = 3;  // 3D 측정용 최대 앵커 수
+    private int currentMaxAnchors;  // 현재 최대 앵커 수를 저장할 변수
 
     private static final int CUBEMAP_RESOLUTION = 16;
     private static final int CUBEMAP_NUMBER_OF_IMPORTANCE_SAMPLES = 32;
@@ -209,15 +211,30 @@ public class CamLength extends AppCompatActivity implements SampleRender.Rendere
         depthSettings.onCreate(this);
         instantPlacementSettings.onCreate(this);
 
-
         selectedItem = getIntent().getStringExtra("selectedCategory");
+        
+        // selectedItem에 따라 최대 앵커 수 설정
+        if (selectedItem != null) {
+            switch (selectedItem) {
+                case "가구류 - 책장":
+                case "생활용품류 - 어항":
+                case "생활용품류 - 조명기구":
+                    currentMaxAnchors = MAX_ANCHORS_3D;  // 3D 측정이 필요한 항목
+                    break;
+                default:
+                    currentMaxAnchors = MAX_ANCHORS_2D;  // 나머지는 2D 측정
+                    break;
+            }
+        } else {
+            currentMaxAnchors = MAX_ANCHORS_2D;  // 기본값으로 2D 측정 설정
+        }
 
         // 버튼 초기화
         Button btn = findViewById(R.id.btn1);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(CamLength.this, MainActivity3.class);
+                Intent intent = new Intent(CamLength.this, CameraResultActivity.class);
                 // 거리 값을 Intent에 추가
                 intent.putExtra("distance1", currentDistance1 * 100.0f);
                 intent.putExtra("distance2", currentDistance2 * 100.0f);
@@ -226,7 +243,6 @@ public class CamLength extends AppCompatActivity implements SampleRender.Rendere
                 finish();  // AR 세션 정리
             }
         });
-
     }
     /** Menu button to launch feature specific settings. */
 
@@ -574,13 +590,25 @@ public class CamLength extends AppCompatActivity implements SampleRender.Rendere
             // UI 스레드에서 거리 표시 업데이트
             runOnUiThread(() -> {
                 String distanceText;
+                if (currentMaxAnchors == MAX_ANCHORS_2D) {
+                    // 2D 측정일 경우
+                    distanceText = String.format(Locale.getDefault(),
+                        "%s\n" +
+                        "가로 길이: %.1f cm\n" +
+                        "세로 길이: %.1f cm",
+                        selectedItem,
+                        currentDistance1 * 100.0f,
+                        currentDistance2 * 100.0f);
+                } else {
+                    // 3D 측정일 경우
                 distanceText = String.format(Locale.getDefault(),
-                "%s\n"+
+                        "%s\n" +
                 "앵커 1-2 거리: %.1f cm\n" +
                 "앵커 2-3 거리: %.1f cm",
                 selectedItem,
                 currentDistance1 * 100.0f,
                 currentDistance2 * 100.0f);
+                }
                 distanceTextView.setText(distanceText);
             });
         } else {
@@ -596,7 +624,6 @@ public class CamLength extends AppCompatActivity implements SampleRender.Rendere
     private void handleTap(Frame frame, Camera camera) {
         MotionEvent tap = tapHelper.poll();
         if (tap != null && camera.getTrackingState() == TrackingState.TRACKING) {
-            // 화면의 중앙 좌표 계산
             float centerX = surfaceView.getWidth() / 2.0f;
             float centerY = surfaceView.getHeight() / 2.0f;
 
@@ -617,7 +644,9 @@ public class CamLength extends AppCompatActivity implements SampleRender.Rendere
                         == OrientationMode.ESTIMATED_SURFACE_NORMAL)
                         || (trackable instanceof InstantPlacementPoint)
                         || (trackable instanceof DepthPoint)) {
-                    if (wrappedAnchors.size() >= 3) {
+                    
+                    // 현재 최대 앵커 수에 따라 처리
+                    if (wrappedAnchors.size() >= currentMaxAnchors) {
                         wrappedAnchors.get(0).getAnchor().detach();
                         wrappedAnchors.remove(0);
                     }

@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity3">
+    android:gravity="center"
+    android:background="#D2D6C5">
+
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/logo"/> <!-- 폐기봇 로고 이미지 -->
+
 
     <TextView
-        android:id="@+id/distance_text"
+        android:id="@+id/appNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:textSize="20sp"
+        android:text="폐기봇"
+        android:textSize="24sp"
         android:textColor="#000000"
-        android:background="#FFFFFF"
-        android:padding="16dp"
-        android:elevation="4dp"/>
+        android:layout_marginTop="20dp" />
 
 </LinearLayout>

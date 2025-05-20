@@ -7,6 +7,8 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 public class SelectItemActivity extends AppCompatActivity {
 
     private Spinner categorySpinner;
@@ -16,6 +18,9 @@ public class SelectItemActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_item);
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        NavNextActivity.setupBottomNavigation(this, bottomNavigationView);
 
         categorySpinner = findViewById(R.id.categorySpinner);
         confirmButton = findViewById(R.id.confirmButton);
