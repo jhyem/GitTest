@@ -1,10 +1,6 @@
 package com.example.project;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.EditText;
@@ -14,11 +10,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Locale;
+
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class CameraResultActivity extends AppCompatActivity {
-
     private ImageView capturedImageView;
     private TextView furnitureInfoTextView;
     private ImageButton confirmButton;
@@ -26,29 +24,38 @@ public class CameraResultActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_camera_result);
 
         capturedImageView = findViewById(R.id.capturedImageView);
         furnitureInfoTextView = findViewById(R.id.furnitureInfoTextView);
         confirmButton = findViewById(R.id.confirmButton);
 
-        String category = getIntent().getStringExtra("selectedCategory");
-        float measuredDistance = getIntent().getFloatExtra("measuredDistance", 0f); // cm 단위
-        String imagePath = getIntent().getStringExtra("imagePath");
+        // Intent에서 거리 값 가져오기
 
-        if (imagePath != null) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            capturedImageView.setImageBitmap(bitmap);
+        String category = getIntent().getStringExtra("selectedCategory");
+        float measuredDistance = getIntent().getFloatExtra("distance1", 0f); // cm 단위
+        float measuredDistance2 = getIntent().getFloatExtra("distance2", 0f);
+        String imagePath = getIntent().getStringExtra("imagePath");
+        int price;
+
+        if(measuredDistance!=0 && measuredDistance2!=0) {
+            price = WastePriceCalculator.calculatePrice2(category, measuredDistance,measuredDistance2);
+        }
+        else {
+            price = WastePriceCalculator.calculatePrice(category, measuredDistance);
         }
 
-        int price = WastePriceCalculator.calculatePrice(category, measuredDistance);
+        // 거리 값 표시
+        String distanceText = String.format(Locale.getDefault(),
+                "가구: %s\n" +
+                        "폐기물 규격 : %.1f cm x %.1f cm",
+                category,
+                measuredDistance,
+                measuredDistance2);
+        furnitureInfoTextView.setText(distanceText);
 
 
-        // UI에 표시
-        furnitureInfoTextView.setText(
-                "가구: " + category + "\n" +
-                        "규격: " +measuredDistance
-        );
         confirmButton.setOnClickListener(v -> {
             new AlertDialog.Builder(CameraResultActivity.this)
                     .setTitle("확인")
@@ -98,7 +105,7 @@ public class CameraResultActivity extends AppCompatActivity {
                                 } else {
                                     resultValue = width; // 길이 기반 항목
                                 }
-
+                                // 새로운 값
                                 int newPrice = WastePriceCalculator.calculatePrice(category, resultValue);
 
                                 Intent intent = new Intent(CameraResultActivity.this, StickerPriceActivity.class);
@@ -117,9 +124,5 @@ public class CameraResultActivity extends AppCompatActivity {
                     })
                     .show();
         });
-
-
-
     }
 }
-

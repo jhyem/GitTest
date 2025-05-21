@@ -2,7 +2,7 @@ package com.example.project;
 public class WastePriceCalculator {
 
     public static int calculatePrice(String category, float distance) {
-        float sizeCm = 0;
+        float sizeCm = distance;
 
         switch (category) {
 
@@ -71,7 +71,23 @@ public class WastePriceCalculator {
                 return sizeCm < 50 ? 1000 : 1500;
 
             default:
-                return 0; // 계산 불가 항목
+                return 0; // 계산 불가
+        }
+    }
+    public static int calculatePrice2(String category, float distance, float distance2) {
+        float sizeCm = distance;
+        float sizeCm2 = distance2;
+        switch (category) {
+
+            case "가구류 - 거울":
+                return sizeCm * sizeCm2 < 10000 ? 1000 : 2000; // 1m^2 기준
+            case "생활용품류 - 어항":
+                return sizeCm * sizeCm2 < 6000 ? 4000 : 6000;
+            case "생활용품류 - 조명기구":
+                return sizeCm * sizeCm2 < 100 ? 1000 : 2000;
+
+            default:
+                return 0; // 계산 불가
         }
     }
 }

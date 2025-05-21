@@ -25,7 +25,7 @@ public class StickerPriceActivity extends AppCompatActivity {
 
         String imagePath = getIntent().getStringExtra("imagePath");
         String result = getIntent().getStringExtra("result");
-        String price = getIntent().getStringExtra("price");
+        int price = getIntent().getIntExtra("price",0);
 
         if (imagePath != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
