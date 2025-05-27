@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- 선택된 상태 -->
+    <item
+        android:color="#006400"
+        android:state_checked="true"
+        />
+    <!-- 선택되지 않은 상태 -->
+    <item
+        android:color="#444444"/>
+</selector>

@@ -25,7 +25,6 @@ public class SelectItemActivity extends AppCompatActivity {
         confirmButton = findViewById(R.id.confirmButton);
 
         confirmButton.setOnClickListener(v -> {
-            // 선택된 품목 추출 (필요 시 인텐트로 넘기기 가능)
             String selectedItem = categorySpinner.getSelectedItem().toString();
 
             Intent intent = new Intent(SelectItemActivity.this, CameraReadyActivity.class);
@@ -34,6 +33,7 @@ public class SelectItemActivity extends AppCompatActivity {
         });
             // 하단 네비게이션 바 부분 이동 함수
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        bottomNav.setSelectedItemId(R.id.nav_home);
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_chatbot) {

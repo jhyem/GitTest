@@ -39,6 +39,7 @@ public class StickerPriceActivity extends AppCompatActivity {
         // 예시 가격 계산
         priceTextView.setText("2000원");
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        bottomNav.setSelectedItemId(R.id.nav_home);
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 

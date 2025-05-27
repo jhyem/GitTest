@@ -45,6 +45,7 @@ public class CameraResultActivity extends AppCompatActivity {
             startActivity(intent);
         });
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        bottomNav.setSelectedItemId(R.id.nav_home);
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 

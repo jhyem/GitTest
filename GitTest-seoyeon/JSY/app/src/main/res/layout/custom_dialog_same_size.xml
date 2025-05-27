@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="규격이 같습니까?"
+        android:fontFamily="@font/bold"
         android:textSize="20sp"
         android:paddingBottom="12dp" />
 
@@ -28,14 +29,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="아니요"
-            android:backgroundTint="#D2D6C5" />
+            android:backgroundTint="#8FBC8F" />
 
         <Button
             android:id="@+id/btnYes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="네"
-            android:backgroundTint="#D2D6C5" />
+            android:backgroundTint="#8FBC8F" />
 
     </LinearLayout>
 

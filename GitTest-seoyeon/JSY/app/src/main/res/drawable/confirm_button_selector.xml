@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 클릭 상태 -->
+    <item android:state_pressed="true" android:drawable="@drawable/ic_check_pressed" />
+    <!-- 기본 상태 -->
+    <item android:drawable="@drawable/ic_check" />
+</selector>

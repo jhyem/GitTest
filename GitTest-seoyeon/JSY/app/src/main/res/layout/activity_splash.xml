@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="#D2D6C5"
+    android:background="#B4F0B4"
     tools:ignore="ExtraText"> <!-- 배경색 (연한 카키색) -->
 
     <ImageView
@@ -20,6 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="폐기봇"
+        android:fontFamily="@font/gmarket"
         android:textSize="24sp"
         android:textColor="#000000"
         android:layout_marginTop="20dp" />

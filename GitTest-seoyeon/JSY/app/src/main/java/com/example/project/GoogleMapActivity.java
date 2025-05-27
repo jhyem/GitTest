@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,14 +17,17 @@ import com.google.android.gms.location.*;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import java.io.*;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Spinner provinceSpinner, citySpinner;
-    private Map<String, Integer> csvFileMap;
+    private Map<String, Integer> csvMap;
     private Button mylocation;
     private FusedLocationProviderClient fusedLocationClient;
 
@@ -42,8 +46,6 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         checkAndRequestLocationPermission();
         setupProvince();
-        setupCity();
-
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_fragment);
@@ -52,6 +54,7 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
         }
 
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        bottomNav.setSelectedItemId(R.id.nav_sticker);
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_home) {
@@ -96,7 +99,7 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
             Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(intent);
         } else {
-            requestRealTimeLocation(); // 실제 위치 요청
+            requestRealTimeLocation();
         }
     }
 
@@ -118,7 +121,6 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
                     return;
                 }
 
-                //  파란 점 표시
                 Location location = locationResult.getLastLocation();
                 LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 16f));
@@ -129,22 +131,62 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void setupProvince() {
+        List<String> provinces = Arrays.asList("서울", "인천");
         ArrayAdapter<String> provinceAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, Collections.singletonList("인천"));
+                android.R.layout.simple_spinner_item, provinces);
         provinceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         provinceSpinner.setAdapter(provinceAdapter);
-        provinceSpinner.setEnabled(false);
+
+        provinceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedProvince = provinces.get(position);
+                setupCity(selectedProvince);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
     }
 
-    private void setupCity() {
+    private void setupCity(String selectedProvince) {
         List<String> cities = new ArrayList<>();
-        cities.add("구 선택해주세요");
-        cities.add("연수구");
-        cities.add("미추홀구");
+        csvMap = new HashMap<>();
 
-        csvFileMap = new HashMap<>();
-        csvFileMap.put("연수구", R.raw.yeonsu);
-        csvFileMap.put("미추홀구", R.raw.micho);
+        if (selectedProvince.equals("인천")) {
+            cities.add("구 선택해주세요");
+            cities.add("연수구");
+            cities.add("미추홀구");
+            csvMap.put("연수구", R.raw.yeonsu);
+            csvMap.put("미추홀구", R.raw.micho);
+        } else if (selectedProvince.equals("서울")) {
+            cities.add("구 선택해주세요");
+
+            csvMap.put("강남구청", R.raw.gangnam);
+            csvMap.put("서초구청", R.raw.seocho);
+            csvMap.put("동작구청", R.raw.dongjack);
+            csvMap.put("구로구청", R.raw.guro);
+            csvMap.put("양천구청", R.raw.yangcheong);
+            csvMap.put("영등포구청", R.raw.yeongdeungpo);
+            csvMap.put("관악구청", R.raw.gwanakgu);
+            csvMap.put("용산구청", R.raw.yongsangu);
+            csvMap.put("서대문구청", R.raw.seodaemun);
+            csvMap.put("마포구청", R.raw.mapo);
+            csvMap.put("은평구청", R.raw.eunpyeong);
+            csvMap.put("종로구청", R.raw.jongro);
+            csvMap.put("중구청", R.raw.junggu);
+            csvMap.put("성북구청", R.raw.seongbukgu);
+            csvMap.put("동대문구청", R.raw.dongdaemun);
+            csvMap.put("중랑구청", R.raw.jungnanggu);
+            csvMap.put("노원구청", R.raw.nowon);
+            csvMap.put("도봉구청", R.raw.dobonggu);
+            csvMap.put("강북구청", R.raw.gangbukgu);
+            csvMap.put("광진구청", R.raw.gwangjingu);
+            csvMap.put("강동구청", R.raw.gangdonggu);
+            csvMap.put("송파구청", R.raw.songpagu);
+
+            cities.addAll(csvMap.keySet());
+        }
 
         ArrayAdapter<String> cityAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, cities);
@@ -152,13 +194,14 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
         citySpinner.setAdapter(cityAdapter);
 
         citySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
+            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedCity = cities.get(position);
-                if (mMap != null && csvFileMap.containsKey(selectedCity)) {
+                if (mMap != null && csvMap.containsKey(selectedCity)) {
                     mMap.clear();
-                    loadCsvMarkers(mMap, csvFileMap.get(selectedCity));
+                    loadCsvMarkers(mMap, csvMap.get(selectedCity));
                 }
             }
+
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
@@ -167,11 +210,11 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        loadCsvMarkers(mMap, R.raw.micho);
+        loadCsvMarkers(mMap, R.raw.micho); // 기본값
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true); // 파란 점 표시 활성화
+            mMap.setMyLocationEnabled(true);
         }
     }
 
@@ -184,23 +227,32 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
             LatLng firstPosition = null;
 
             while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) continue;
+
                 String[] tokens = line.split(",");
-                if (tokens.length != 4) continue;
+                if (tokens.length == 4) {
+                    String name = tokens[0].trim();
+                    String address = tokens[1].trim();
+                    double lat = Double.parseDouble(tokens[2].trim());
+                    double lng = Double.parseDouble(tokens[3].trim());
 
-                String name = tokens[0].trim();
-                String address = tokens[1].trim();
-                double lat = Double.parseDouble(tokens[2].trim());
-                double lng = Double.parseDouble(tokens[3].trim());
+                    LatLng position = new LatLng(lat, lng);
+                    map.addMarker(new MarkerOptions().position(position).title(name).snippet(address));
+                    if (firstPosition == null) firstPosition = position;
+                } else if (tokens.length == 3) {
+                    String name = tokens[0].trim();
+                    double lat = Double.parseDouble(tokens[1].trim());
+                    double lng = Double.parseDouble(tokens[2].trim());
 
-                LatLng position = new LatLng(lat, lng);
-                map.addMarker(new MarkerOptions().position(position).title(name).snippet(address));
-                if (firstPosition == null) {
-                    firstPosition = position;
+                    LatLng position = new LatLng(lat, lng);
+                    map.addMarker(new MarkerOptions().position(position).title(name));
+                    if (firstPosition == null) firstPosition = position;
                 }
             }
             reader.close();
             if (firstPosition != null) {
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(firstPosition, 15.0f));
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(firstPosition, 13.0f));
             }
         } catch (Exception e) {
             Log.e("csv error", "CSV 파일 읽기 실패!", e);
@@ -214,11 +266,9 @@ public class GoogleMapActivity extends AppCompatActivity implements OnMapReadyCa
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (mMap != null) {
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        mMap.setMyLocationEnabled(true); // 파란 점 표시
-                    }
+                if (mMap != null && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    mMap.setMyLocationEnabled(true);
                 }
                 checkGpsAndShowLocation();
             } else {
