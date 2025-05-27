@@ -39,6 +39,7 @@ dependencies {
     implementation libs.core
     implementation libs.scenecore
     implementation libs.firebase.crashlytics.buildtools
+    implementation libs.volley
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

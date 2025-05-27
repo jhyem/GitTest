@@ -12,6 +12,7 @@ cameraLifecycle = "1.4.2"
 core = "1.48.0"
 scenecore = "1.0.0-alpha04"
 firebaseCrashlyticsBuildtools = "3.0.3"
+volley = "1.2.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -26,6 +27,7 @@ camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", versi
 core = { group = "com.google.ar", name = "core", version.ref = "core" }
 scenecore = { group = "androidx.xr.scenecore", name = "scenecore", version.ref = "scenecore" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
+volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
