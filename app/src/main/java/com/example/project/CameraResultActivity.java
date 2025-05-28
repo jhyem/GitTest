@@ -43,7 +43,7 @@ public class CameraResultActivity extends AppCompatActivity {
         confirmButton = findViewById(R.id.confirmButton);
 
         String category = getIntent().getStringExtra("selectedCategory");
-        float measuredDistance = getIntent().getFloatExtra("distance1", 0f);
+        float measuredDistance = getIntent().getFloatExtra("distance1", 100f);
         float measuredDistance2 = getIntent().getFloatExtra("distance2", 0f);
         String imagePath = getIntent().getStringExtra("imagePath");
 
@@ -72,18 +72,22 @@ public class CameraResultActivity extends AppCompatActivity {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
-
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
                     try {
+                        Log.d("CameraResult", "서버 응답 원문: " + response.toString()); // 이거 추가
                         priceFromServer = response.getInt("fee");
                         Log.d("CameraResult", "받은 가격: " + priceFromServer);
                     } catch (JSONException e) {
+                        Log.e("CameraResult", "파싱 실패", e);
                         Toast.makeText(this, "서버 응답 파싱 실패", Toast.LENGTH_SHORT).show();
                     }
                 },
-                error -> Toast.makeText(this, "서버 연결 실패", Toast.LENGTH_SHORT).show()
-        );
+                error -> {
+                    Log.e("CameraResult", "Volley error", error);
+                    Toast.makeText(this, "서버 연결 실패", Toast.LENGTH_SHORT).show();
+                });
+        Log.d("CameraResult", "요청 URL: " + url);
         queue.add(request);
 
         // 확인 버튼 눌렀을 때
