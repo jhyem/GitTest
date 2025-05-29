@@ -1,33 +1,34 @@
 <resources>
     <string name="app_name">project</string>
     <string-array name="category_items">
-        <item>가전제품류 - TV</item>
-        <item>가전제품류 - 공기청정기</item>
-        <item>가전제품류 - 식기건조기</item>
-        <item>가전제품류 - 식기세척기</item>
-        <item>가전제품류 - 에어컨 실외기</item>
-        <item>가전제품류 - 정수기</item>
+        <item>제품을 선택해주세요</item>
+        <item>TV</item>
+        <item>공기청정기</item>
+        <item>식기건조기</item>
+        <item>식기세척기</item>
+        <item>에어컨 실외기</item>
+        <item>정수기</item>
 
-        <item>가구류 - TV 받침대</item>
-        <item>가구류 - 거울</item>
-        <item>가구류 - 찬장</item>
-        <item>가구류 - 책상</item>
-        <item>가구류 - 책장</item>
-        <item>가구류 - 싱크대</item>
-        <item>가구류 - 유리</item>
-        <item>가구류 - 장롱</item>
-        <item>가구류 - 장식장</item>
+        <item>TV 받침대</item>
+        <item>거울</item>
+        <item>찬장</item>
+        <item>책상</item>
+        <item>책장</item>
+        <item>싱크대</item>
+        <item>유리</item>
+        <item>장롱</item>
+        <item>장식장</item>
 
-        <item>생활용품류 - 게시판 · 화이트보드</item>
-        <item>생활용품류 - 고무통</item>
-        <item>생활용품류 - 벽시계</item>
-        <item>생활용품류 - 빨래건조대</item>
-        <item>생활용품류 - 액자</item>
-        <item>생활용품류 - 어항</item>
-        <item>생활용품류 - 조명기구</item>
-        <item>생활용품류 - 캣타워</item>
-        <item>생활용품류 - 항아리</item>
-        <item>생활용품류 - 화분</item>
+        <item>게시판 · 화이트보드</item>
+        <item>고무통</item>
+        <item>벽시계</item>
+        <item>빨래건조대</item>
+        <item>액자</item>
+        <item>어항</item>
+        <item>조명기구</item>
+        <item>캣타워</item>
+        <item>항아리</item>
+        <item>화분</item>
     </string-array>
 
 </resources>

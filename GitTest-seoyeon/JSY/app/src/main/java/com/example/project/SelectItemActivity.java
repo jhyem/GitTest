@@ -31,7 +31,7 @@ public class SelectItemActivity extends AppCompatActivity {
             intent.putExtra("selectedCategory", selectedItem);
             startActivity(intent);
         });
-            // 하단 네비게이션 바 부분 이동 함수
+        // 하단 네비게이션 바 부분 이동 함수
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
         bottomNav.setSelectedItemId(R.id.nav_home);
         bottomNav.setOnItemSelectedListener(item -> {

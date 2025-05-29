@@ -3,6 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     tools:ignore="ExtraText">
     android:shape="rectangle">
-    <solid android:color="#B4F0B4" />
-    <corners android:topLeftRadius="22dp" android:topRightRadius="22dp" />
+    <solid android:color="#6DD66D"/>
+    <corners android:radius="16dp"/>
 </shape>

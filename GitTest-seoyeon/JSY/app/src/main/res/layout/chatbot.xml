@@ -5,9 +5,77 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_gravity="center"
+    tools:context=".ChatbotActivity">
+
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/logo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#66FFFFFF"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chatRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/channelMenuText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 하단 메뉴 버튼 -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/channelMenuText"
+        android:layout_width="180dp"
+        android:layout_height="30dp"
+        android:text="메뉴"
+        android:textColor="@android:color/black"
+        android:background="@drawable/bg_channel_menu"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:drawableEnd="@drawable/down"
+        android:paddingStart="30dp"
+        android:paddingEnd="50dp"
+        android:gravity="center"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <!-- 카드 메뉴 창 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cardMenu"
+        android:layout_width="250dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:elevation="4dp"
+        android:background="@android:color/white"
+        android:padding="8dp"
+        android:layout_marginRight="11dp"
+        app:layout_constraintBottom_toTopOf="@id/channelMenuText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp" />
+
+    <!-- 하단 네비게이션 -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="0dp"
@@ -16,7 +84,7 @@
         android:elevation="8dp"
         app:menu="@menu/bottom_nav_menu"
         app:itemIconSize="24dp"
-        app:labelVisibilityMode = "labeled"
+        app:labelVisibilityMode="labeled"
         app:itemIconTint="@color/nav_item_color"
         app:itemTextColor="@color/nav_item_color"
         app:itemTextAppearanceActive="@style/BottomNavigationText"
